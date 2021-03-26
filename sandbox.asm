@@ -87,11 +87,9 @@ right_pressed:
 move:
 
 ; player
-mov ax, 0adbh
 imul di, [player_y], 160
 add di, [player_x]
-mov [es:di], ax
-
+mov word [es:di], 2020h
 
 ; delay
 mov bx, [046ch]
