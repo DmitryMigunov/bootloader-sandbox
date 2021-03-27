@@ -39,9 +39,15 @@ down_pressed:
 	jmp draw
 left_pressed:
 	dec word [player_x]
+	cmp word [player_x], 2
+	jg draw
+	mov word [player_x], 2
 	jmp draw
 right_pressed:
 	inc word [player_x]
+	cmp word [player_x], 78*2
+	jl draw
+	mov word [player_x], 78*2
 	jmp draw
 
 draw:
