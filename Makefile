@@ -5,3 +5,6 @@ sandbox.bin: sandbox.asm
 run: sandbox.bin
 	qemu-system-i386 -fda $<
 
+.PHONY: dump
+dump: sandbox.bin
+	xxd sandbox.bin

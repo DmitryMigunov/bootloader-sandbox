@@ -8,14 +8,52 @@ int 10h
 mov ax, 0B800h
 mov es, ax ; ES:DI <- B800:0000
 
+jmp draw
 loop:
+; input
+mov ah, 00h
+int 16h
+
+cmp ah, 48h
+je top_pressed
+cmp ah, 50h
+je down_pressed
+cmp ah, 4bh
+je left_pressed
+cmp ah, 4dh
+je right_pressed
+
+jmp next
+
+top_pressed:
+	dec word [player_y]
+	cmp word [player_y], 1
+	jge draw
+	mov word [player_y], 1
+	jmp draw
+down_pressed:
+	inc word [player_y]
+	cmp word [player_y], 23
+	jl draw
+	mov word [player_y], 23
+	jmp draw
+left_pressed:
+	dec word [player_x]
+	jmp draw
+right_pressed:
+	inc word [player_x]
+	jmp draw
+
+draw:
+; clean screen
 xor ax, ax
 xor di, di
 mov cx, 80*25
 rep stosw
 
-xor di, di
+; draw borders
 
+xor di, di
 mov ax, 0fcdh
 tb_border:
 	add di, 2
@@ -50,47 +88,12 @@ mov ax, 0fc8h
 sub di, 79*2
 mov [es:di], ax
 
-
-
-; input
-mov ah, 1
-int 16h
-jz move
-
-cbw
-int 16h
-cmp ah, 48h
-je top_pressed
-cmp ah, 50h
-je down_pressed
-cmp ah, 4bh
-je left_pressed
-cmp ah, 4dh
-je right_pressed
-
-jmp move
-
-top_pressed:
-	dec word [player_y]
-	jmp move
-down_pressed:
-	inc word [player_y]
-	jmp move
-left_pressed:
-	dec word [player_x]
-	jmp move
-right_pressed:
-	inc word [player_x]
-	jmp move
-
-
-move:
-
-; player
+; draw player
 imul di, [player_y], 160
 add di, [player_x]
 mov word [es:di], 2020h
 
+next:
 ; delay
 mov bx, [046ch]
 inc bx
